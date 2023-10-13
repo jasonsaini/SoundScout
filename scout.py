@@ -152,3 +152,26 @@ def calculate_weighted_popularity(release_date):
     # the newer the release, the higher the popularity 
     weight = 1 / (time_span.days + 1)
     return weight
+
+# Normalize the music features using Min-Max scaling
+scaler = MinMaxScaler()
+music_features = music_df[['Danceability', 'Energy', 'Key', 
+                           'Loudness', 'Mode', 'Speechiness', 'Acousticness',
+                           'Instrumentalness', 'Liveness', 'Valence', 'Tempo']].values
+music_features_scaled = scaler.fit_transform(music_features)
+
+# Generating music reccom. based on audio features
+def content_based_recommendations(input_song_name, num_recommendations=5):
+    if input_song_name not in music_df['Track Name'].values:
+        print(f"'{input_song_name}' not found in the dataset. Please enter a valid song name.")
+        return
+
+    input_song_index = music_df[music_df['Track Name'] == input_song_name].index[0]
+
+    similarity_scores = cosine_similarity([music_features_scaled[input_song_index]], music_features_scaled)
+
+    similar_song_indices = similarity_scores.argsort()[0][::-1][1:num_recommendations + 1]
+
+    content_based_recommendations = music_df.iloc[similar_song_indices][['Track Name', 'Artists', 'Album Name', 'Release Date', 'Popularity']]
+
+    return content_based_recommendations
