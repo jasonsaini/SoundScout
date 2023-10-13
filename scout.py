@@ -5,6 +5,12 @@ import base64
 import pandas as pd
 import spotipy
 
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from datetime import datetime
+from sklearn.metrics.pairwise import cosine_similarity
+
 load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
