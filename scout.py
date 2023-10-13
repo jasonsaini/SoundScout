@@ -175,3 +175,37 @@ def content_based_recommendations(input_song_name, num_recommendations=5):
     content_based_recommendations = music_df.iloc[similar_song_indices][['Track Name', 'Artists', 'Album Name', 'Release Date', 'Popularity']]
 
     return content_based_recommendations
+
+# generate hybrid_reccomendations based on weighted popularity 
+def hybrid_recommendations(input_song_name, num_recommendations=5, alpha=0.5):
+    if input_song_name not in music_df['Track Name'].values:
+        print(f"'{input_song_name}' not found in the dataset. Please enter a valid song name.")
+        return
+
+    # Get content-based recommendations
+    content_based_rec = content_based_recommendations(input_song_name, num_recommendations)
+
+    # Get the popularity score of the input song
+    popularity_score = music_df.loc[music_df['Track Name'] == input_song_name, 'Popularity'].values[0]
+
+    # Calculate the weighted popularity score
+    weighted_popularity_score = popularity_score * calculate_weighted_popularity(music_df.loc[music_df['Track Name'] == input_song_name, 'Release Date'].values[0])
+
+    # Combine content-based and popularity-based recommendations based on weighted popularity
+    hybrid_recommendations = content_based_rec
+    hybrid_recommendations = hybrid_recommendations.append({
+        'Track Name': input_song_name,
+        'Artists': music_df.loc[music_df['Track Name'] == input_song_name, 'Artists'].values[0],
+        'Album Name': music_df.loc[music_df['Track Name'] == input_song_name, 'Album Name'].values[0],
+        'Release Date': music_df.loc[music_df['Track Name'] == input_song_name, 'Release Date'].values[0],
+        'Popularity': weighted_popularity_score
+    }, ignore_index=True)
+
+    # Sort the hybrid recommendations based on weighted popularity score
+    hybrid_recommendations = hybrid_recommendations.sort_values(by='Popularity', ascending=False)
+
+    # Remove the input song from the recommendations
+    hybrid_recommendations = hybrid_recommendations[hybrid_recommendations['Track Name'] != input_song_name]
+
+
+    return hybrid_recommendations
