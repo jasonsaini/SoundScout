@@ -125,4 +125,30 @@ def get_trending_playlist_data(playlist_id, access_token):
 
 token = get_token()
 
-search_for_artist(token, "khalid")
+playlist_id = '4MnplqXo55mzspyBqFnFgs'
+
+# Call the function to get the music data from the playlist and store it in a DataFrame
+# extract music data from the specified playlist using token
+music_df = get_trending_playlist_data(playlist_id, token)
+
+# Display the DataFrame - contains music data
+print(music_df)
+
+# check if the data has any null values
+print(music_df.isnull().sum())
+
+# store the music data
+data = music_df
+
+# function to calculate wieghted popularity scores
+def calculate_weighted_popularity(release_date):
+    # Convert the release date to datetime object
+    release_date = datetime.strptime(release_date, '%Y-%m-%d')
+
+    # Calculate the time span between release date and today's date
+    time_span = datetime.now() - release_date
+
+    # Calculate the weighted popularity score based on time span (e.g., more recent releases have higher weight)
+    # the newer the release, the higher the popularity 
+    weight = 1 / (time_span.days + 1)
+    return weight
