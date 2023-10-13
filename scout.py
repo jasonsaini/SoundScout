@@ -125,7 +125,7 @@ def get_trending_playlist_data(playlist_id, access_token):
 
 token = get_token()
 
-playlist_id = '4MnplqXo55mzspyBqFnFgs'
+playlist_id = '1WpIXieFqJVgQyyuKFrUhN'
 
 # Call the function to get the music data from the playlist and store it in a DataFrame
 # extract music data from the specified playlist using token
@@ -209,3 +209,9 @@ def hybrid_recommendations(input_song_name, num_recommendations=5, alpha=0.5):
 
 
     return hybrid_recommendations
+
+# driver code
+input_song_name = "Across the Spider-Verse (Intro)"
+recommendations = hybrid_recommendations(input_song_name, num_recommendations=5)
+print(f"Hybrid recommended songs for '{input_song_name}':")
+print(recommendations)
